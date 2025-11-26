@@ -1,0 +1,53 @@
+* {
+    background-color: bisque;
+}
+
+.btn {
+    background-color: rgb(241, 190, 127);
+    padding:5px 20px;
+    font-size: 20px;
+    font-weight:700;
+}
+
+.button-wrapper {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom:30px;
+}
+
+.tradeheader {
+    text-align: center;
+    background-color: rgb(249, 212, 166);
+    padding:20px;
+    border:2px solid black;
+    border-radius:20px;
+}
+
+.stocktable {
+width: 100%;
+border-collapse: collapse;
+table-layout: fixed;
+border:2px solid black;
+}
+
+.stocktable td {
+    background-color: white;
+}
+
+.stocktable th, .stocktable td {
+    padding: 10px, 12px;
+    text-align:left;
+}
+
+.table-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.net-worth {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

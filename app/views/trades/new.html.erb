@@ -1,0 +1,43 @@
+<h1> New Trade</h1>
+
+<% if @trade.errors.any? %>
+    <div>
+        <h3><%= pluralize(@trade.errors.count, "error") %> prevented saving:</h3>
+        <ul>
+            <% @trade.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+            <% end %>
+        </ul>
+    </div>
+<% end %>
+
+<%= form_with model: @trade do |f|%>
+    <div>
+        <%= f.label :symbol, "Ticker" %><br>
+        <%= f.text_field :symbol, placeholder: "AAPL" %>
+    </div>
+
+    <div>
+        <%= f.label :side %><br>
+        <%= f.select :side, Trade.sides.keys.map { |k| [k.titleize, k] }%>
+    </div>
+
+    <div>
+        <%= f.label :quantity %><br>
+        <%= f.number_field :quantity, step:0.0001 %>
+    </div>
+
+    <div>
+        <%= f.label :price %><br>
+        <%= f.number_field :price, step: 0.0001 %>
+    </div>
+    <div>
+        <%= f.label :trade_date %><br>
+        <%= f.date_field :trade_date %>
+    </div>
+        <div style="margin-top: 12px;">
+        <%= f.submit "Create Trade" %>
+    </div>
+<% end %>
+
+<p><%= link_to "Back to trades", trades_path %></p>

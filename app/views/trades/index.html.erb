@@ -1,0 +1,38 @@
+<h1 class="tradeheader">Portfolio</h1>
+<div class="button-wrapper">
+<%= button_to "New Trade", new_trade_path, method: :get, class:"btn"%>
+</div>
+
+<div class="table-wrap">
+<table class="stocktable">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Ticker</th>
+      <th>Side</th>
+      <th>Qty</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @trades.each do |t| %>
+      <tr>
+        <td><%= t.trade_date %></td>
+        <td><%= t.stock.symbol %></td>
+        <td><%= t.side.upcase %></td>
+        <td><%= t.quantity %></td>
+        <td><%= number_to_currency(t.price) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<div class="net-worth">
+  <p>
+    Net Worth: <strong><%= number_to_currency(@net_worth) %></strong>
+  </p>
+  <p>
+    Cash: <strong><%= number_to_currency(@cash_balance)%></strong>
+  </p>
+  <%= button_to "Logout", destroy_user_session_path, method: :delete, class:"btn"%>  
+</div>

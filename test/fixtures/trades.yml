@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  stock: one
+  side: 1
+  quantity: 9.99
+  price: 9.99
+  trade_date: 2025-11-26
+
+two:
+  user: two
+  stock: two
+  side: 1
+  quantity: 9.99
+  price: 9.99
+  trade_date: 2025-11-26

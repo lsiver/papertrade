@@ -1,0 +1,70 @@
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema[8.1].define(version: 2025_11_26_205242) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
+  create_table "daily_prices", force: :cascade do |t|
+    t.decimal "close", precision: 15, scale: 4
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.decimal "high", precision: 15, scale: 4
+    t.decimal "low", precision: 15, scale: 4
+    t.decimal "open", precision: 15, scale: 4
+    t.string "source", default: "eodhd", null: false
+    t.bigint "stock_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "volume"
+    t.index ["stock_id", "date"], name: "index_daily_prices_on_stock_id_and_date", unique: true
+    t.index ["stock_id"], name: "index_daily_prices_on_stock_id"
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "exchange"
+    t.string "name"
+    t.string "symbol", null: false
+    t.datetime "updated_at", null: false
+    t.index ["symbol"], name: "index_stocks_on_symbol", unique: true
+  end
+
+  create_table "trades", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "price", precision: 15, scale: 4, null: false
+    t.decimal "quantity", precision: 15, scale: 4, null: false
+    t.integer "side", null: false
+    t.bigint "stock_id", null: false
+    t.date "trade_date", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["stock_id"], name: "index_trades_on_stock_id"
+    t.index ["user_id", "stock_id", "trade_date"], name: "index_trades_on_user_id_and_stock_id_and_trade_date"
+    t.index ["user_id"], name: "index_trades_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  add_foreign_key "daily_prices", "stocks"
+  add_foreign_key "trades", "stocks"
+  add_foreign_key "trades", "users"
+end
