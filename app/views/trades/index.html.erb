@@ -41,7 +41,7 @@
 
 <div class="net-worth">
   <p>
-    Net Worth: <strong><%= number_to_currency(@net_worth) %></strong>
+    Net Worth: <strong><%= number_to_currency(@net_worth) %> ( <%= number_with_precision((@net_worth-100000)/1000, precision:2)%>% )</strong>
   </p>
   <p>
     Cash: <strong><%= number_to_currency(@cash_balance)%></strong>
