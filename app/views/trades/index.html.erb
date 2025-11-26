@@ -27,6 +27,18 @@
   </tbody>
 </table>
 </div>
+
+<div class="chart">
+  <% if @snapshots.any? %>
+    <canvas id="netWorthChart"
+      data-labels="<%= @chart_labels.to_json %>"
+      data-values="<%= @chart_values.to_json %>"></canvas>
+      <% else %>
+      <p> No snapshots, yet</p>
+      <% end %>
+</div>
+
+
 <div class="net-worth">
   <p>
     Net Worth: <strong><%= number_to_currency(@net_worth) %></strong>
@@ -36,3 +48,37 @@
   </p>
   <%= button_to "Logout", destroy_user_session_path, method: :delete, class:"btn"%>  
 </div>
+
+
+<script>
+  document.addEventListener("turbo:load", () => {
+    const el = document.getElementById("netWorthChart");
+    if (!el || !window.Chart) return;
+
+    const labels = JSON.parse(el.dataset.labels || "[]");
+    const values = JSON.parse(el.dataset.values || "[]");
+
+    if (el._chart) el._chart.destroy();
+
+    el._chart = new Chart(el.getContext("2d"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{ label: "Net Worth", data: values, tension: 0.25 }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true } },
+        scales: {
+          y: {
+            ticks: {
+              callback: (v) => new Intl.NumberFormat("en-US", {
+                style: "currency", currency: "USD", maximumFractionDigits: 0
+              }).format(v)
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
