@@ -13,8 +13,10 @@
 
 <%= form_with model: @trade do |f|%>
     <div>
-        <%= f.label :symbol, "Ticker" %><br>
-        <%= f.text_field :symbol, placeholder: "AAPL" %>
+        <%= f.label :stock_id, "Ticker" %><br>
+        <%= f.select :stock_id,
+            options_from_collection_for_select(@stocks, :id, :symbol, @trade.stock_id),
+            { prompt: "Select a ticker" } %>
     </div>
 
     <div>
@@ -40,4 +42,4 @@
     </div>
 <% end %>
 
-<p><%= link_to "Back to trades", trades_path %></p>
+<p><%= link_to "Back to Portfolio", trades_path %></p>

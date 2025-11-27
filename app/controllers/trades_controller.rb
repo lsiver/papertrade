@@ -6,13 +6,14 @@ class TradesController < ApplicationController
     @net_worth = current_user.net_worth
     @cash_balance = current_user.cash_balance(as_of: Date.today)
 
-    from = 30.days.ago.to_date
+    from = 90.days.ago.to_date
     to = Date.today
 
     if current_user.snapshots_backfilled_until.nil? || current_user.snapshots_backfilled_until < to
       PortfolioSnapshotBackfill.call(user: current_user, from: from, to: to)
       current_user.update_column(:snapshots_backfilled_until, to)
     end
+    # PortfolioSnapshotBackfill.call(user: current_user, from: from, to: to)
 
 
     @snapshots = current_user.portfolio_snapshots.where(date: from..to).order(:date)
@@ -22,15 +23,16 @@ class TradesController < ApplicationController
 
   def new
     @trade = Trade.new(trade_date: Date.today)
+    @stocks = Stock.order(:symbol)
   end
 
   def create
-    stock = Stock.find_or_create_by_symbol!(trade_params[:symbol])
-    @trade = current_user.trades.new(trade_params.except(:symbol).merge(stock: stock))
+    @trade = current_user.trades.new(trade_params)
 
     if @trade.save
       redirect_to trades_path, notice: "Trade created."
     else
+      @stocks = Stock.order(:symbol)
       render :new, status: :unprocessable_entity
     end
   end
@@ -38,6 +40,6 @@ class TradesController < ApplicationController
   private
 
   def trade_params
-    params.require(:trade).permit(:symbol, :side, :quantity, :price, :trade_date)
+    params.require(:trade).permit(:stock_id, :side, :quantity, :price, :trade_date)
   end
 end
