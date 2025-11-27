@@ -1,0 +1,28 @@
+.login {
+    color:royalblue;
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    border:2px solid black;
+    width:350px;
+    margin:auto;
+    border-radius:20px;
+    padding:10px;
+
+}
+
+.field {
+    margin-bottom:5px;
+    padding:5px;
+}
+
+.actions {
+    margin-bottom: 10px;
+    justify-content: center;
+    justify-items: center;
+    justify-self: center;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+}
