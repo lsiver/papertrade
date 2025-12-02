@@ -9,6 +9,10 @@
     font-weight:700;
 }
 
+.btn:hover {
+    background-color: rgb(230, 164, 84);
+}
+
 .button-wrapper {
     display:flex;
     justify-content: center;
@@ -66,4 +70,34 @@ border:2px solid black;
 #netWorthChart {
     max-height: 320px;
     max-width: 1000px;
+}
+
+.overall-div {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    border-radius:50px;
+    width:500px;
+    margin:auto;
+}
+
+.new-trade-text {
+    font-size: 20px;
+    margin-bottom:10px;
+}
+
+a.btn, button.btn, input.btn {
+    display:inline-block;
+    padding: 10px 40px;
+    background-color: rgb(241, 190, 127);
+    border:2px solid black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.btn:link, a.btn:visited {
+    color: black;
+    text-decoration: none;
 }

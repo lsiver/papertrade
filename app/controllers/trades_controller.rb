@@ -24,6 +24,7 @@ class TradesController < ApplicationController
   def new
     @trade = Trade.new(trade_date: Date.today)
     @stocks = Stock.order(:symbol)
+    @cash_balance = current_user.cash_balance(as_of: Date.today)
   end
 
   def create

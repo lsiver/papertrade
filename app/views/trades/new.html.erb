@@ -1,3 +1,5 @@
+<div class="overall-div">
+
 <h1> New Trade</h1>
 
 <% if @trade.errors.any? %>
@@ -12,34 +14,101 @@
 <% end %>
 
 <%= form_with model: @trade do |f|%>
-    <div>
+    <div class="new-trade-text" >
         <%= f.label :stock_id, "Ticker" %><br>
         <%= f.select :stock_id,
             options_from_collection_for_select(@stocks, :id, :symbol, @trade.stock_id),
-            { prompt: "Select a ticker" } %>
+            { prompt: "Select a ticker" },
+            { id: "trade_stock_id" } %>
     </div>
 
-    <div>
+    <div class="new-trade-text" >
         <%= f.label :side %><br>
         <%= f.select :side, Trade.sides.keys.map { |k| [k.titleize, k] }%>
     </div>
 
-    <div>
-        <%= f.label :quantity %><br>
-        <%= f.number_field :quantity, step:0.0001 %>
+    <div class="new-trade-text" >
+        <%= f.label :quantity  %><br>
+        <%= f.number_field :quantity, step:0.0001, id: "trade_quantity" %>
     </div>
 
-    <div>
-        <%= f.label :price %><br>
-        <%= f.number_field :price, step: 0.0001 %>
+    <div class="new-trade-text" >
+        <%= f.label :price  %><br>
+        <%= f.number_field :price, step: 0.0001, id: "trade_price" %>
     </div>
-    <div>
-        <%= f.label :trade_date %><br>
-        <%= f.date_field :trade_date %>
+    <div class="new-trade-text" >
+        <%= f.label :trade_date  %><br>
+        <%= f.date_field :trade_date, id: "trade_trade_date" %>
+    </div>
+    <div class="new-trade-text">
+    <p>Total: <span id="trade_total">$0.00</span></p>
+    </div>
+    <div class="new-trade-text">
+    <p>Cash: <strong><%= number_to_currency(@cash_balance) %></strong></p>
     </div>
         <div style="margin-top: 12px;">
-        <%= f.submit "Create Trade" %>
+        <%= f.submit "Create Trade", class:"btn" %>
     </div>
 <% end %>
 
-<p><%= link_to "Back to Portfolio", trades_path %></p>
+<div class="button-wrapper">
+<p class="back-to-portfolio"><%= link_to "Back to Portfolio", trades_path, class:"btn" %></p>
+</div>
+
+</div>
+
+
+
+
+
+<script>
+  document.addEventListener("turbo:load", () => {
+    const stockSelect = document.getElementById("trade_stock_id");
+    const dateField   = document.getElementById("trade_trade_date");
+    const priceEl     = document.getElementById("trade_price");
+    const qtyEl       = document.getElementById("trade_quantity");
+    const totalEl     = document.getElementById("trade_total");
+
+    if (!stockSelect || !dateField || !priceEl || !qtyEl || !totalEl) return;
+
+    function updateTotal() {
+      const price = parseFloat(priceEl.value || "0");
+      const qty   = parseFloat(qtyEl.value || "0");
+      const total = price * qty;
+
+      totalEl.textContent = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD"
+      }).format(total);
+    }
+
+    async function fillPriceIfBlank() {
+      const stockId = stockSelect.value;
+      const date    = dateField.value;
+      if (!stockId || !date) return;
+
+      if (priceEl.value && priceEl.value.trim() !== "") return;
+
+      const resp = await fetch(`/stocks/${stockId}/close_price?date=${encodeURIComponent(date)}`);
+      if (!resp.ok) return;
+
+      const data = await resp.json();
+      if (data.close != null) {
+        priceEl.value = data.close;
+        updateTotal();
+      }
+    }
+
+    // price autofill triggers
+    stockSelect.addEventListener("change", fillPriceIfBlank);
+    dateField.addEventListener("change", fillPriceIfBlank);
+
+    // total cost / proceeds triggers
+    priceEl.addEventListener("input", updateTotal);
+    qtyEl.addEventListener("input", updateTotal);
+
+    //initialize
+    fillPriceIfBlank();
+    updateTotal();
+  });
+</script>
