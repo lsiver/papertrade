@@ -221,3 +221,9 @@ input.btn:hover {
 .back-to-portfolio {
     margin-top: 8px;
 }
+
+.table-title {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}

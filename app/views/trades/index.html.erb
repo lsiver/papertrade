@@ -6,6 +6,9 @@
 <div class="table-wrap">
 <table class="stocktable">
   <thead>
+    <div class="table-title">
+      <h2>Transaction History</h2>
+    </div>
     <tr>
       <th>Date</th>
       <th>Ticker</th>
@@ -27,6 +30,34 @@
   </tbody>
 </table>
 </div>
+
+
+
+<div class="table-wrap">
+<table class="stocktable">
+  <thead>
+    <div class="table-title">
+      <h2>Holdings</h2>
+    </div>
+    <tr>
+      <th>Ticker</th>
+      <th>Qty</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @trades.each do |t| %>
+      <tr>
+        <td><%= t.stock.symbol %></td>
+        <td><%= t.side.upcase %></td>
+        <td><%= t.quantity %></td>
+        <td><%= number_to_currency(t.price) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+
 
 <div class="chart">
   <% if @snapshots.any? %>
