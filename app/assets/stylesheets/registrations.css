@@ -1,3 +1,11 @@
+.login-parent {
+    display:flex;
+    height:600px;
+    align-items:center;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .login {
     color:royalblue;
     display:flex;
