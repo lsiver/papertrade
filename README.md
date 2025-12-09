@@ -32,5 +32,3 @@ PaperTrade is a small Ruby on Rails application that lets you simulate trading a
 - Run `bin/rails test` (or `bundle exec rails test`) to exercise the existing test suite.
 - The seeded symbols live in `db/seeds.rb`; feel free to add more and rerun `Stock#sync_daily_prices!`.
 - Snapshot backfill runs automatically when visiting the trades index, but `UpdatePortfolioSnapshotsJob` can be scheduled via your background processor or manually invoked (`bin/rails runner UpdatePortfolioSnapshotsJob.perform_now`).
-
-Let me know if you want a “getting help” section or deployment instructions next.
