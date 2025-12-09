@@ -24,6 +24,9 @@
   </head>
 
   <body>
+    <% unless devise_controller? %>
+      <%= render "shared/navbar" %>
+    <% end %>
     <%= yield %>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>

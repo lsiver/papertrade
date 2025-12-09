@@ -1,0 +1,16 @@
+.navbar {
+    background-color: var(--bg);
+    padding:10px;
+    box-shadow: 0 12px 30px rgba(20, 33, 61, 0.08);
+}
+
+.navbar__links {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    gap:200px;
+}
+
+/* .navbar__links, .navbar__links button.btn {
+    font-size: 15px;
+} */
