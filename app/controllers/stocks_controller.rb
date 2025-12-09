@@ -12,6 +12,12 @@ class StocksController < ApplicationController
     render json: { error: "invalid date" }, status: :unprocessable_entity
   end
 
+  def price_history
+    stock = Stock.find(params[:id])
+    history = stock.daily_prices.where("date <= ?", Date.today).order(:date)
+    render json: history.map { |dp| [dp.date.to_s, dp.close.to_f] }
+  end
+
   def index
     @stocks = Stock.all
     stock_ids = @stocks.pluck(:id)

@@ -13,6 +13,8 @@
     </div>
 <% end %>
 
+
+
 <%= form_with model: @trade do |f|%>
     <div class="new-trade-text" >
         <%= f.label :stock_id, "Ticker" %>
@@ -51,6 +53,19 @@
     </div>
 <% end %>
 
+<div id="price-history-wrapper" class="table-wrap" hidden>
+  <div class="table-title">
+    <h2>Price history</h2>
+  </div>
+  <div>
+    <%= line_chart [], id: "price-history-chart", height: "320px", library: { animation: false } %>
+  </div>
+</div>
+
+
+
+
+
 <div class="button-wrapper">
 <p class="back-to-portfolio"><%= link_to "Back to Portfolio", trades_path, class:"btn" %></p>
 </div>
@@ -68,6 +83,8 @@
     const priceEl     = document.getElementById("trade_price");
     const qtyEl       = document.getElementById("trade_quantity");
     const totalEl     = document.getElementById("trade_total");
+    const chartWrapper = document.getElementById("price-history-wrapper");
+    const chartId = "price-history-chart";
 
     if (!stockSelect || !dateField || !priceEl || !qtyEl || !totalEl) return;
 
@@ -99,8 +116,44 @@
       }
     }
 
+    function setChartVisibility(show) {
+      if (chartWrapper) {
+        chartWrapper.hidden = !show;
+      }
+    }
+
+    function updateChartData(data, attempt = 0) {
+      const chart = window.Chartkick?.charts?.[chartId];
+      if (!chart) {
+        if (attempt >= 20) return;
+        return setTimeout(() => updateChartData(data, attempt + 1), 50);
+      }
+      chart.updateData(data);
+    }
+
+    async function refreshPriceHistory(stockId) {
+      if (!chartWrapper) return;
+      if (!stockId) {
+        setChartVisibility(false);
+        return;
+      }
+
+      setChartVisibility(true);
+      const resp = await fetch(`/stocks/${stockId}/price_history`);
+      if (!resp.ok) {
+        setChartVisibility(false);
+        return;
+      }
+
+      const data = await resp.json();
+      updateChartData(data);
+    }
+
     // price autofill triggers
-    stockSelect.addEventListener("change", fillPriceIfBlank);
+    stockSelect.addEventListener("change", () => {
+      fillPriceIfBlank();
+      refreshPriceHistory(stockSelect.value);
+    });
     dateField.addEventListener("change", fillPriceIfBlank);
 
     // total cost / proceeds triggers
@@ -110,5 +163,6 @@
     //initialize
     fillPriceIfBlank();
     updateTotal();
+    refreshPriceHistory(stockSelect.value);
   });
 </script>
