@@ -73,3 +73,5 @@ end
 
 
 gem "openssl"
+gem "chartkick"
+gem "groupdate"

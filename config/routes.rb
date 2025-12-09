@@ -14,4 +14,5 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "trades#index"
   resources :trades, only: %i[index new create]
+  resources :stocks, only: %i[index show]
 end

@@ -1,0 +1,33 @@
+<h1 class="stockheader">Stocks</h1>
+
+<div class="table-wrap">
+  <table class="stocktable">
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Plot</th>
+        <th>Recent Price</th>
+        <th> Past 30 Days</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @stocks.each do |stock| %>
+        <% price = @latest_price_by_stock[stock.id] %>
+        <tr>
+          <td><%= stock.symbol %></td>
+          <td><%= link_to stock.name.presence || "PLOT", stock_path(stock) %></td>
+          <td>
+            <% if price %>
+              <%= number_to_currency(price.close) %>
+              <% if price.date %>
+                <span class="muted">(<%= price.date.strftime("%b %-d, %Y") %>)</span>
+              <% end %>
+            <% else %>
+              <em>No price yet</em>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

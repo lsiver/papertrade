@@ -1,0 +1,5 @@
+<h1 class="stockheader"><%= @stock.symbol %> - <%= @stock.name %></h1>
+
+<div class="chartwrap">
+<%= line_chart @prices.pluck(:date, :close), xtitle: "Date", ytitle: "Close Price" %>
+</div>

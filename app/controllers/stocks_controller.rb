@@ -11,4 +11,15 @@ class StocksController < ApplicationController
   rescue ArgumentError
     render json: { error: "invalid date" }, status: :unprocessable_entity
   end
+
+  def index
+    @stocks = Stock.all
+    stock_ids = @stocks.pluck(:id)
+    @latest_price_by_stock = DailyPrice.latest_records_for(stock_ids: stock_ids)
+  end
+
+  def show
+    @stock = Stock.find(params[:id])
+    @prices = @stock.daily_prices.order(:date)
+  end
 end

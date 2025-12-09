@@ -1,0 +1,15 @@
+.stockheader {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 48px auto 24px;
+    padding: 20px;
+    max-width: 900px;
+    background: var(--surface);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(20, 33, 61, 0.08);
+}
+
+.chartwrap {
+    padding:20px;
+}
