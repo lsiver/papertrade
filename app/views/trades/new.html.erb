@@ -15,7 +15,7 @@
 
 <%= form_with model: @trade do |f|%>
     <div class="new-trade-text" >
-        <%= f.label :stock_id, "Ticker" %><br>
+        <%= f.label :stock_id, "Ticker" %>
         <%= f.select :stock_id,
             options_from_collection_for_select(@stocks, :id, :symbol, @trade.stock_id),
             { prompt: "Select a ticker" },
@@ -23,21 +23,21 @@
     </div>
 
     <div class="new-trade-text" >
-        <%= f.label :side %><br>
+        <%= f.label :side %>
         <%= f.select :side, Trade.sides.keys.map { |k| [k.titleize, k] }%>
     </div>
 
     <div class="new-trade-text" >
-        <%= f.label :quantity  %><br>
+        <%= f.label :quantity  %>
         <%= f.number_field :quantity, step:0.0001, id: "trade_quantity" %>
     </div>
 
     <div class="new-trade-text" >
-        <%= f.label :price  %><br>
+        <%= f.label :price  %>
         <%= f.number_field :price, step: 0.0001, id: "trade_price" %>
     </div>
     <div class="new-trade-text" >
-        <%= f.label :trade_date  %><br>
+        <%= f.label :trade_date  %>
         <%= f.date_field :trade_date, id: "trade_trade_date" %>
     </div>
     <div class="new-trade-text">
