@@ -12,7 +12,7 @@
         <th>Qty</th>
         <th>Avg Price</th>
         <th>Current Price</th>
-        <th>Net Value</th>
+        <th>Gains</th>
       </tr>
     </thead>
     <tbody>
@@ -95,17 +95,17 @@
 </table>
 </div>
 
-
-
-
-
+<% min_chart = [@chart_values.compact.min.to_f * 0.95, 100_000].min.round(0) %>
 
 <div class="chart">
   <% if @snapshots.any? %>
     <%= line_chart @chart_labels.zip(@chart_values), xtitle: "Date",
   library: {
     scales: {
-      y: {min: 100000}
+      y: {min: min_chart }
+    },
+    elements: {
+      point: { radius: 0 }
     }
   },
   title: "Portfolio Value"
@@ -115,5 +115,3 @@
       <% end %>
 </div>
 <br>
-
-

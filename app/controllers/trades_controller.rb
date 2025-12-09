@@ -7,17 +7,30 @@ class TradesController < ApplicationController
     @cash_balance = current_user.cash_balance(as_of: Date.today)
     @holdings = build_holdings(@trades)
 
-    from = 90.days.ago.to_date
-    to = Date.today
+    snapshot_window_from = 90.days.ago.to_date
+    snapshot_window_to = Date.today
+    needs_full_backfill = current_user.snapshot_needs_full_backfill?
+    earliest_trade_date = current_user.trades.minimum(:trade_date)
+    backfill_from = needs_full_backfill ? (earliest_trade_date || snapshot_window_from) : snapshot_window_from
 
-    if current_user.snapshots_backfilled_until.nil? || current_user.snapshots_backfilled_until < to
-      PortfolioSnapshotBackfill.call(user: current_user, from: from, to: to)
-      current_user.update_column(:snapshots_backfilled_until, to)
+    should_backfill = needs_full_backfill ||
+      current_user.snapshots_backfilled_until.nil? ||
+      current_user.snapshots_backfilled_until < snapshot_window_to
+
+    if should_backfill
+      PortfolioSnapshotBackfill.call(
+        user: current_user,
+        from: backfill_from,
+        to: snapshot_window_to,
+        force: needs_full_backfill
+      )
+      current_user.update!(
+        snapshots_backfilled_until: snapshot_window_to,
+        snapshot_needs_full_backfill: false
+      )
     end
-    # PortfolioSnapshotBackfill.call(user: current_user, from: from, to: to)
 
-
-    @snapshots = current_user.portfolio_snapshots.where(date: from..to).order(:date)
+    @snapshots = current_user.portfolio_snapshots.where(date: snapshot_window_from..snapshot_window_to).order(:date)
     @chart_labels = @snapshots.map { |s| s.date.to_s }
     @chart_values = @snapshots.map { |s| s.net_worth.to_f }
   end
@@ -32,6 +45,7 @@ class TradesController < ApplicationController
     @trade = current_user.trades.new(trade_params)
 
     if @trade.save
+      current_user.update!(snapshot_needs_full_backfill: true)
       redirect_to trades_path, notice: "Trade created."
     else
       @stocks = Stock.order(:symbol)

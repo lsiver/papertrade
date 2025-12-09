@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_26_233254) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_02_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -71,6 +71,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_26_233254) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
+    t.boolean "snapshot_needs_full_backfill", default: false, null: false
     t.date "snapshots_backfilled_until"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true

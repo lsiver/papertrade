@@ -53,12 +53,19 @@
     </div>
 <% end %>
 
-<div id="price-history-wrapper" class="table-wrap" hidden>
+<div id="price-history-wrapper" class="table-wrap-new-trade" hidden>
+<%# <div id="price-history-wrapper" class="table-wrap" hidden> %>
   <div class="table-title">
     <h2>Price history</h2>
   </div>
   <div>
-    <%= line_chart [], id: "price-history-chart", height: "320px", library: { animation: false } %>
+    <%= line_chart [], id: "price-history-chart",
+      library: {
+        animation: false,
+        elements: {
+          point: { radius: 0 }
+        }
+      } %>
   </div>
 </div>
 
