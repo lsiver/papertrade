@@ -1,7 +1,69 @@
 <h1 class="tradeheader">Stock Portfolio</h1>
-<div class="button-wrapper">
-<%= button_to "New Trade", new_trade_path, method: :get, class:"btn"%>
+<br>
+
+<div class="table-wrap">
+  <table class="stocktable">
+    <thead>
+      <div class="table-title">
+        <h2>Holdings</h2>
+      </div>
+      <tr>
+        <th>Ticker</th>
+        <th>Qty</th>
+        <th>Avg Price</th>
+        <th>Current Price</th>
+        <th>Net Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @holdings.each do |holding| %>
+        <tr>
+          <td><%= link_to holding[:stock].symbol, stock_path(holding[:stock]) %></td>
+          <td><%= holding[:net_qty] %></td>
+          <td>
+            <% if holding[:average_price] %>
+              <%= number_to_currency(holding[:average_price]) %>
+            <% else %>
+              <span class="muted">N/A</span>
+            <% end %>
+          </td>
+          <td>
+            <% if holding[:current_price] %>
+              <%= number_to_currency(holding[:current_price]) %>
+              <% if holding[:price_date] %>
+                <span class="muted">(<%= holding[:price_date].strftime("%b %-d, %Y") %>)</span>
+              <% end %>
+            <% else %>
+              <span class="muted">No price</span>
+            <% end %>
+          </td>
+          <td>
+            <% if holding[:net_value] %>
+              <%= number_to_currency(holding[:net_value]) %>
+            <% else %>
+              <span class="muted">N/A</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @holdings.empty? %>
+        <tr>
+          <td colspan="5"><span class="muted">No holdings yet</span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
+
+<div class="net-worth">
+  <p>
+    Net Worth: <strong><%= number_to_currency(@net_worth) %> ( <%= number_with_precision((@net_worth-100000)/1000, precision:2)%>% )</strong>
+  </p>
+  <p>
+    Cash: <strong><%= number_to_currency(@cash_balance)%></strong>
+  </p>
+</div>
+
 
 <div class="table-wrap">
 <table class="stocktable">
@@ -15,6 +77,7 @@
       <th>Side</th>
       <th>Qty</th>
       <th>Price</th>
+      <th>Total</th>
     </tr>
   </thead>
   <tbody>
@@ -25,6 +88,7 @@
         <td><%= t.side.upcase %></td>
         <td><%= t.quantity %></td>
         <td><%= number_to_currency(t.price) %></td>
+        <td><%= t.quantity*t.price%></td>
       </tr>
     <% end %>
   </tbody>
@@ -33,35 +97,12 @@
 
 
 
-<div class="table-wrap">
-<table class="stocktable">
-  <thead>
-    <div class="table-title">
-      <h2>Holdings</h2>
-    </div>
-    <tr>
-      <th>Ticker</th>
-      <th>Qty</th>
-      <th>Price</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @trades.each do |t| %>
-      <tr>
-        <td><%= t.stock.symbol %></td>
-        <td><%= t.side.upcase %></td>
-        <td><%= t.quantity %></td>
-        <td><%= number_to_currency(t.price) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-</div>
+
 
 
 <div class="chart">
   <% if @snapshots.any? %>
-    <%= line_chart @chart_labels.zip(@chart_values), xtitle: "Date", ytitle:"Net Worth",
+    <%= line_chart @chart_labels.zip(@chart_values), xtitle: "Date",
   library: {
     scales: {
       y: {min: 100000}
@@ -73,16 +114,6 @@
       <p> No snapshots, yet</p>
       <% end %>
 </div>
-
-
-<div class="net-worth">
-  <p>
-    Net Worth: <strong><%= number_to_currency(@net_worth) %> ( <%= number_with_precision((@net_worth-100000)/1000, precision:2)%>% )</strong>
-  </p>
-  <p>
-    Cash: <strong><%= number_to_currency(@cash_balance)%></strong>
-  </p>
-  <%= button_to "Logout", destroy_user_session_path, method: :delete, class:"btn"%>  
-</div>
+<br>
 
 

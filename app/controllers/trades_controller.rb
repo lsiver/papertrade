@@ -5,6 +5,7 @@ class TradesController < ApplicationController
     @trades = current_user.trades.includes(:stock).order(trade_date: :desc, created_at: :desc)
     @net_worth = current_user.net_worth
     @cash_balance = current_user.cash_balance(as_of: Date.today)
+    @holdings = build_holdings(@trades)
 
     from = 90.days.ago.to_date
     to = Date.today
@@ -42,5 +43,62 @@ class TradesController < ApplicationController
 
   def trade_params
     params.require(:trade).permit(:stock_id, :side, :quantity, :price, :trade_date)
+  end
+
+  def build_holdings(trades)
+    grouped_trades = trades.group_by(&:stock)
+    stock_ids = grouped_trades.keys.map(&:id)
+    latest_prices = DailyPrice.latest_records_for(stock_ids: stock_ids)
+
+    grouped_trades.sort_by { |stock, _| stock.symbol }.map do |stock, stock_trades|
+      buy_qty = 0
+      sell_qty = 0
+      buy_cost = 0.to_d
+      sell_proceeds = 0.to_d
+
+      stock_trades.each do |trade|
+        qty = trade.quantity
+        price = trade.price.to_d
+
+        if trade.buy?
+          buy_qty += qty
+          buy_cost += qty * price
+        else
+          sell_qty += qty
+          sell_proceeds += qty * price
+        end
+      end
+
+      net_qty = buy_qty - sell_qty
+
+      average_price = case
+      when net_qty.positive?
+        buy_qty.positive? ? buy_cost / buy_qty : nil
+      when net_qty.negative?
+        sell_qty.positive? ? sell_proceeds / sell_qty : nil
+      else
+        buy_qty.positive? ? buy_cost / buy_qty : nil
+      end
+
+      price_record = latest_prices[stock.id]
+      current_price = price_record&.close
+
+      net_value = if current_price && average_price
+        if net_qty.negative?
+          net_qty.abs * (average_price - current_price)
+        else
+          net_qty * (current_price - average_price)
+        end
+      end
+
+      {
+        stock: stock,
+        net_qty: net_qty,
+        average_price: average_price,
+        current_price: current_price,
+        price_date: price_record&.date,
+        net_value: net_value
+      }
+    end
   end
 end
