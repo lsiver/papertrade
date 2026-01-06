@@ -12,5 +12,9 @@ symbols = %w[AAPL TSLA AMD NVDA ONDS OPEN NIO PLUG BBAI GOOGL AAL SOFI GOOG F]
 stocks = symbols.map { |sym| Stock.find_or_create_by_symbol!(sym) }
 
 stocks.each do |stock|
-  stock.sync_daily_prices!(from: 300.days.ago.to_date, to: Date.today)
+  begin
+    stock.sync_daily_prices!(from: 300.days.ago.to_date, to: Date.today)
+  rescue => e
+    Rails.logger.warn("Seed price sync failed for #{stock.symbol}: #{e.message}")
+  end
 end
